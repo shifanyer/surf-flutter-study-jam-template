@@ -19,6 +19,14 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  late TextEditingController messageController;
+
+  @override
+  void initState() {
+    messageController = TextEditingController();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,7 +44,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   color: Colors.white,
                 ),
                 onPressed: () {
-                  /* Clear the search field */
+                  setState(() {});
                 },
               ),
               hintText: 'Введите ник',
@@ -46,45 +54,92 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
         ),
       )),
-      body: FutureBuilder<List<ChatMessageDto>>(
-          future: widget.chatRepository.messages,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              print("snapshot.data ${snapshot.data.toString()}");
-              return ListView.builder(
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    leading: Container(
-                      decoration: BoxDecoration(
-                        color: ThemeData.light().backgroundColor,
-                        shape: BoxShape.circle
-                      ),
-                      width: 60,
-                      height: 60,
-                    ),
-                    title: Text(
-                      snapshot.data?[index].author.name ?? '',
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    subtitle: Text(snapshot.data?[index].message ?? ''),
-                    onTap: () {},
+      body: Stack(
+        children: [
+          FutureBuilder<List<ChatMessageDto>>(
+              future: widget.chatRepository.messages,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return ListView.builder(
+                    itemBuilder: (context, index) {
+                      if (index == (snapshot.data?.length ?? 0)) {
+                        return const SizedBox(
+                          height: 50,
+                        );
+                      }
+                      return ListTile(
+                        leading: Container(
+                          decoration: BoxDecoration(color: ThemeData.light().backgroundColor, shape: BoxShape.circle),
+                          width: 60,
+                          height: 60,
+                          child: FittedBox(
+                            child: Text(
+                              snapshot.data?[index].author.name[0] ?? 'X',
+                              style: const TextStyle(fontSize: 300, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        title: Text(
+                          snapshot.data?[index].author.name ?? '',
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        subtitle: Text(snapshot.data?[index].message ?? ''),
+                        onTap: () {},
+                      );
+                    },
+                    itemCount: snapshot.data?.length ?? 0 + 1,
                   );
-                },
-                itemCount: snapshot.data?.length ?? 0,
-              );
-            } else {
-              return const SizedBox(
-                width: 50,
-                height: 50,
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
-              );
-            }
-          }),
+                } else {
+                  return const SizedBox(
+                    width: 50,
+                    height: 50,
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  );
+                }
+              }),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: Container(
+                  height: 40.0,
+                  padding: const EdgeInsets.symmetric(vertical: 2.0),
+                  alignment: Alignment.bottomCenter,
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.95,
+                    child: Center(
+                      child: TextField(
+                        controller: messageController,
+                        autocorrect: false,
+                        decoration: InputDecoration(
+                          fillColor: Colors.blue,
+                          suffixIcon: IconButton(
+                            icon: const Icon(Icons.send),
+                            onPressed: () {
+                              widget.chatRepository.sendMessage('Vano', messageController.text);
+                              setState(() {
+                                messageController.clear();
+                              });
+                            },
+                          ),
+                          hintText: 'Сообщение',
+                          hintStyle: TextStyle(fontSize: 20.0, color: Colors.black.withOpacity(0.5)),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black.withOpacity(0.5)),
+                          ),
+                        ),
+                      ),
+                    ),
+                  )),
+            ),
+          )
+        ],
+      ),
     );
     throw UnimplementedError();
   }
