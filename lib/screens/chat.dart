@@ -71,6 +71,9 @@ class _ChatScreenState extends State<ChatScreen> {
               future: widget.chatRepository.messages,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
+                  if (snapshot.data?.isEmpty ?? true){
+                    return Center(child: Text('чат пуст'),);
+                  }
                   return ListView.builder(
                     controller: listViewController,
                     reverse: true,
