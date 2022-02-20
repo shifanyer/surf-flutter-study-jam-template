@@ -64,9 +64,9 @@ class _MessageFieldState extends State<MessageField> {
 
             _locationData = await location.getLocation();
             print('_locationData: ${_locationData.latitude} ${_locationData.longitude}');
-            // widget.chatRepository.sendGeolocationMessage(
-            //     nickname: widget.localUser.name,
-            //     location: ChatGeolocationDto(latitude: _locationData.latitude!, longitude: _locationData.longitude!), message: 'my geolocation');
+            widget.chatRepository.sendGeolocationMessage(
+                nickname: widget.localUser.name,
+                location: ChatGeolocationDto(latitude: _locationData.latitude!, longitude: _locationData.longitude!));
           },
         ),
         suffixIcon: isPause
