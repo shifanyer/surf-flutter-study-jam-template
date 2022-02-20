@@ -6,6 +6,7 @@ import 'package:surf_practice_chat_flutter/data/chat/repository/repository.dart'
 import '../data/chat/models/message.dart';
 import '../data/chat/models/user.dart';
 import '../data/chat/repository/firebase.dart';
+import '../widgets/message_field.dart';
 
 /// Chat screen templete. This is your starting point.
 class ChatScreen extends StatefulWidget {
@@ -23,13 +24,11 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  late TextEditingController messageController;
   late TextEditingController usernameController;
   late ScrollController listViewController;
 
   @override
   void initState() {
-    messageController = TextEditingController();
     usernameController = TextEditingController();
     listViewController = ScrollController();
     super.initState();
@@ -130,7 +129,13 @@ class _ChatScreenState extends State<ChatScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
                 alignment: Alignment.bottomCenter,
                 child: Center(
-                  child: TextField(
+                    child: MessageField(
+                  chatRepository: widget.chatRepository,
+                  listViewController: listViewController,
+                  localUser: widget.localUser,
+                )
+                    /*
+                  TextField(
                     controller: messageController,
                     autocorrect: false,
                     onTap: () {
@@ -142,8 +147,10 @@ class _ChatScreenState extends State<ChatScreen> {
                       suffixIcon: IconButton(
                         icon: const Icon(Icons.send),
                         onPressed: () async {
-                          widget.chatRepository.sendMessage(widget.localUser.name, messageController.text);
-                          // messageController.clear();
+                          await widget.chatRepository.sendMessage(widget.localUser.name, messageController.text);
+                          messageController.clear();
+                          listViewController.animateTo(listViewController.position.maxScrollExtent,
+                              duration: Duration(milliseconds: 500), curve: Curves.ease);
                           setState(() {});
                         },
                       ),
@@ -154,7 +161,8 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                     ),
                   ),
-                )),
+                  */
+                    )),
           )
         ],
       ),
