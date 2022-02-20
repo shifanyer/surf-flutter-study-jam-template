@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import 'package:surf_practice_chat_flutter/data/chat/repository/repository.dart';
@@ -24,11 +25,13 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   late TextEditingController messageController;
   late TextEditingController usernameController;
+  late ScrollController listViewController;
 
   @override
   void initState() {
     messageController = TextEditingController();
     usernameController = TextEditingController();
+    listViewController = ScrollController();
     super.initState();
   }
 
@@ -50,7 +53,10 @@ class _ChatScreenState extends State<ChatScreen> {
                   color: Colors.white,
                 ),
                 onPressed: () {
-                  setState(() {});
+                  setState(() {
+                    listViewController.animateTo(listViewController.position.maxScrollExtent,
+                        duration: Duration(milliseconds: 500), curve: Curves.ease);
+                  });
                 },
               ),
               hintText: 'Введите ник',
@@ -67,6 +73,7 @@ class _ChatScreenState extends State<ChatScreen> {
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return ListView.builder(
+                    controller: listViewController,
                     reverse: true,
                     itemBuilder: (context, index) {
                       if (index == (0)) {
@@ -102,14 +109,14 @@ class _ChatScreenState extends State<ChatScreen> {
                       }
                     },
                     itemCount: (snapshot.data?.length ?? 0) + 1,
+                    dragStartBehavior: DragStartBehavior.down,
                   );
                 } else {
                   return const Center(
                     child: SizedBox(
                       width: 80,
                       height: 80,
-                      child: CircularProgressIndicator(
-                      ),
+                      child: CircularProgressIndicator(),
                     ),
                   );
                 }
@@ -126,6 +133,10 @@ class _ChatScreenState extends State<ChatScreen> {
                   child: TextField(
                     controller: messageController,
                     autocorrect: false,
+                    onTap: () {
+                      listViewController.animateTo(listViewController.position.maxScrollExtent,
+                          duration: Duration(milliseconds: 500), curve: Curves.ease);
+                    },
                     decoration: InputDecoration(
                       fillColor: Colors.blue,
                       suffixIcon: IconButton(
