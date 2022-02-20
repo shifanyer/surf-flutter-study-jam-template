@@ -5,6 +5,8 @@ import 'package:surf_practice_chat_flutter/data/chat/repository/firebase.dart';
 import 'package:surf_practice_chat_flutter/firebase_options.dart';
 import 'package:surf_practice_chat_flutter/screens/chat.dart';
 
+import 'data/chat/models/user.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -12,10 +14,10 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform(
       androidKey: 'AIzaSyCXU5f25S_SUeVv7cAzoeF373kHk4Hv2dE',
       iosKey: 'enter ios key here',
-      webKey: 'enter web key here',
+      webKey: 'AIzaSyD40PR_fizjSYtCZEtXgwq_5LdJu2w2zIs',
     ),
   );
-  
+
   runApp(const MyApp());
 }
 
@@ -33,6 +35,7 @@ class MyApp extends StatelessWidget {
       ),
       home: ChatScreen(
         chatRepository: chatRepository,
+        localUser: ChatUserLocalDto(name: 'Vano'),
       ),
     );
   }

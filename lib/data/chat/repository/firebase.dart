@@ -7,7 +7,7 @@ import 'package:surf_practice_chat_flutter/data/chat/repository/repository.dart'
 
 class ChatRepositoryFirebase implements ChatRepository {
   static const String _messagesCollectionKey = 'messages';
-  static const int _messagesLimit = 20;
+  static const int _messagesLimit = 200;
 
   final FirebaseFirestore _firebaseClient;
 
